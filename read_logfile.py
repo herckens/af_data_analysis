@@ -84,6 +84,17 @@ def read_logfile(logfilename):
             if (words[find_key_of_dict(column_map, "count_rotations")] == "0"):
                 continue # we're done with this line
 
+        # Skip all lines that have a count_rotations that is too high
+        if (column_map.values().count("count_rotations") > 0):
+            if type == 'baseline':
+                limit = 10
+            elif type == 'training_with_feedback':
+                limit = 100
+            elif type == 'training_without_feedback':
+                limit = 100
+            if (int(words[find_key_of_dict(column_map, "count_rotations")]) > limit):
+                continue # we're done with this line
+
         for i in column_map.keys():
             if (i >= len(words)):
                 # if this is true, then we have an incomplete line
