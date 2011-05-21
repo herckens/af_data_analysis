@@ -109,3 +109,21 @@ def calc_mean_error(center_x, center_y, radius, x_vals, y_vals):
         sum += abs(radius - np.sqrt(x*x + y*y))
 
     return sum / length
+
+
+def calc_error_samples(center_x, center_y, radius, x_vals, y_vals):
+    """
+    For experiments without feedback.
+    Calculate the (signed, no abs()) error for each timestamp.
+    Returns a list of lenth len(x_vals)
+    """
+    length = len(x_vals)
+    errors = [] # will eventually contain the current error for each timestamp
+
+    for i in range(0, length):
+        x = x_vals[i] - center_x
+        y = y_vals[i] - center_y
+        error = np.sqrt(x*x + y*y) - radius 
+        errors.append(error)
+
+    return errors
