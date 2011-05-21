@@ -17,8 +17,6 @@ logFileDirs = os.listdir(subjectDir)
 
 scriptDir = os.getcwd() # save current dir to go back to it later
 
-# sumNormal = {}
-# sumCtrlGrp = {}
 meansNormal = {}
 meansCtrlGrp = {}
 countNormal = 0
@@ -49,6 +47,14 @@ for subjectNo in range(0, len(logFileDirs)):
     for i in range(0, len(fnames)):
         print('Log file number ' + str(i))
         data, type = read_logfile(fnames[i])    # read the logfile
+
+        # if no feedback, compute error from dynamically calculated center and
+        # radius, because subject might have been drawing circles not around
+        # the origin but any other point in the table plane, so the logged
+        # error variable is useless.
+        if (type == 'baseline' or type == 'training_without_feedback'):
+            center_x, center_y, radius = processing.calc_mean_circle(data['pos_x'], data['pos_y'])
+            data['error'] = processing.calc_error_samples(center_x, center_y, radius, data['pos_x'], data['pos_y'])
 
         length = len(data['error'])
 
@@ -82,7 +88,7 @@ for subjectNo in range(0, len(logFileDirs)):
         # this logfile).
         meanErrPerRot[rotOffset+lastRot-1] = meanErrPerRot[rotOffset+lastRot-1] / counter
         counter = 0
-    # end of logfile
+        # end of logfile
 
     print(meanErrPerRot)
     for rotNo in range(0, len(meanErrPerRot)):
@@ -100,9 +106,19 @@ for rotNo in range(0, len(meansNormal['error'])):
 
 fig = pylab.figure(1)
 pylab.clf()
-pylab.plot(range(1,len(meansNormal['error'])+1), meansNormal['error'], label='mean error per rotation (With Feedback)')
-pylab.plot(range(1,len(meansCtrlGrp['error'])+1), meansCtrlGrp['error'], label='mean error per rotation (Control Group)')
-pylab.xlabel('Rotations')
+pylab.plot(range(1,len(meansNormal['error'])+1), meansNormal['error'], c='k', linestyle = '-', label='error (With Feedback)')
+# pylab.plot(range(1,len(meansNormal['error'])+1), meansNormal['error'], 'o', c='k')
+pylab.plot(range(1,len(meansCtrlGrp['error'])+1), meansCtrlGrp['error'], c='k', linestyle = '--', label='error (Control Group)')
+# pylab.plot(range(1,len(meansCtrlGrp['error'])+1), meansCtrlGrp['error'], '*', c='k')
+pylab.xlabel('Trials')
 pylab.ylabel('mean |error| [mm]')
+pylab.title('Mean |error| per trial, average over all subjects')
 pylab.legend()
-pylab.show()    # actually show all the plots. This should be at the bottom.
+pylab.savefig('plot2.svg')
+
+# from matplotlib.backends.backend_pdf import PdfPages
+# pp = PdfPages('plot2.pdf')
+# pp.savefig()
+# pp.close()
+
+#pylab.show()    # actually show all the plots. This should be at the bottom.
