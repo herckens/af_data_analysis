@@ -7,6 +7,7 @@ import sys
 from read_logfile import *
 import processing
 
+#TODO try filtering the output before plotting
 
 desiredTimePerRot = 9.0 # in [s], the optimal time a subject would need for one rotation
 
@@ -71,8 +72,8 @@ for subjectNo in range(0, len(logFileDirs)):
             currRot = int(data['count_rotations'][sampleNo])
             # update the sum for the current rotation
             # TODO maybe without the abs() in next line?!
-            # meanErrPerRot[rotOffset+int(data['count_rotations'][sampleNo])-1] += abs(data['time_for_last_rotation'][sampleNo] - desiredTimePerRot)
-            meanErrPerRot[rotOffset+int(data['count_rotations'][sampleNo])-1] += data['time_for_last_rotation'][sampleNo] - desiredTimePerRot
+            meanErrPerRot[rotOffset+int(data['count_rotations'][sampleNo])-1] += abs(data['time_for_last_rotation'][sampleNo] - desiredTimePerRot)
+            # meanErrPerRot[rotOffset+int(data['count_rotations'][sampleNo])-1] += data['time_for_last_rotation'][sampleNo] - desiredTimePerRot
             if currRot != lastRot:
                 # compute average for the just completed rotation
                 meanErrPerRot[rotOffset+lastRot-1] = meanErrPerRot[rotOffset+lastRot-1] / counter
@@ -101,11 +102,11 @@ for rotNo in range(0, len(meansNormal['velError'])):
 
 fig = pylab.figure(1)
 pylab.clf()
-pylab.plot(range(1,len(meansNormal['velError'])+1), meansNormal['velError'], c='k', linestyle = '-', label='velocity error (With Feedback)')
-pylab.plot(range(1,len(meansCtrlGrp['velError'])+1), meansCtrlGrp['velError'], c='k', linestyle = '--', label='velocity error (Control Group)')
+pylab.plot(range(1,len(meansNormal['velError'])+1), meansNormal['velError'], c='k', linestyle = '-', label='timing error (With Feedback)')
+pylab.plot(range(1,len(meansCtrlGrp['velError'])+1), meansCtrlGrp['velError'], c='k', linestyle = '--', label='timing error (Control Group)')
 pylab.xlabel('Trials')
-pylab.ylabel('mean |velocity error| [s]')
-pylab.title('|velocity error| per trial, average over all subjects')
+pylab.ylabel('mean |timing error| [s]')
+pylab.title('|timing error| per trial, average over all subjects')
 pylab.legend()
 pylab.savefig('plot3.svg')
 
