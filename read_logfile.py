@@ -1,10 +1,3 @@
-import pylab
-import numpy as np
-import os
-
-import sys
-
-
 def find_key_of_dict(dic, val):
     """return the key of dictionary dic given the value"""
     return [k for k, v in dic.iteritems() if v == val][0]
@@ -97,11 +90,8 @@ def read_logfile(logfilename):
 
         for i in column_map.keys():
             if (i >= len(words)):
-                # if this is true, then we have an incomplete line
-                # TODO Maybe we even have to delete this line completely,
-                # meaning strip off the last values off the variables that we
-                # have already added...
-                # in front of for add if(max(column_map.keys()) <= len(words)):
+                # if this is true, then we have an incomplete line, should be
+                # ommitted.
                 break
             data[column_map[i]].append(float(words[i]))
 

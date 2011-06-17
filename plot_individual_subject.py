@@ -1,11 +1,10 @@
 import pylab
-import numpy as np
 import os
 
 import sys
 
 from read_logfile import *
-import processing
+import processing # contains functions to process auditory feedback log data
 
 
 # Some global variables

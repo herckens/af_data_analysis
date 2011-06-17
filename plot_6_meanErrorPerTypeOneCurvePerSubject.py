@@ -74,6 +74,23 @@ for subjectNo in range(0, len(logFileDirs)):
     os.chdir(scriptDir)
     # end of subject
 
+
+### Write data to new txt file for statistical analysis ###
+f = open('plot6b_data.txt', 'w')
+f.write('# <subjectNumber> <meanErrorBaseline> <meanErrorRetention>\n')
+f.write('### Normal Subjects ###\n')
+for subjectNo in range(0, len(meanErrorNormal)):
+    f.write(str(subjectNo) + ' ' + str(meanErrorNormal[subjectNo][0]) + ' ' +
+            str(meanErrorNormal[subjectNo][2]) + '\n')
+f.write('### Control Group Subjects ###\n')
+for subjectNo in range(0, len(meanErrorCtrlGrp)):
+    f.write(str(subjectNo) + ' ' + str(meanErrorCtrlGrp[subjectNo][0]) + ' ' +
+            str(meanErrorCtrlGrp[subjectNo][2]) + '\n')
+f.close()
+
+
+
+### Print with training ###
 fig = pylab.figure(1)
 pylab.clf()
 # expPhase = ['Baseline', 'Training', 'Retention']
@@ -86,7 +103,23 @@ pylab.xlabel('Experiment Phase')
 pylab.ylabel('mean |error| [mm]')
 pylab.title('Mean |error|')
 pylab.legend()
-pylab.savefig('plot6.svg')
+pylab.savefig('plot6a.svg')
+
+### Print without training ###
+fig = pylab.figure(1)
+pylab.clf()
+# expPhase = ['Baseline', 'Training', 'Retention']
+expPhase = [1, 2]
+for subjectNo in range(0, len(meanErrorNormal)):
+    pylab.plot(expPhase, [meanErrorNormal[subjectNo][0], meanErrorNormal[subjectNo][2]], '*-', c='k', label='With Feedback')
+for subjectNo in range(0, len(meanErrorCtrlGrp)):
+    pylab.plot(expPhase, [meanErrorCtrlGrp[subjectNo][0], meanErrorCtrlGrp[subjectNo][2]], 'o--', c='k', label='Without Feedback')
+pylab.xlabel('Experiment Phase')
+pylab.ylabel('mean |error| [mm]')
+pylab.title('Mean |error|')
+pylab.legend()
+pylab.axis([0.9, 2.1, 5, 30])
+pylab.savefig('plot6b.svg')
 
 # from matplotlib.backends.backend_pdf import PdfPages
 # pp = PdfPages('plot6.pdf')
