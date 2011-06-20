@@ -61,6 +61,9 @@ for subjectNo in range(0, len(logFileDirs)):
         # Precondition the data
         data = processing.precondition_data(data)
 
+        if (type == 'training_with_feedback'):
+            data['error'] = processing.calc_mean_error_per_n_rotations(data['error'], data['phase'], 5)
+
         rotOffset = 0 # Baseline
         if i == 1:
             rotOffset = 10 # Training

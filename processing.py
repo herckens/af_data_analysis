@@ -31,43 +31,103 @@ def precondition_data(data):
     return data
 
 
-def calc_mean_error_per_rotation(time, error, phase):
+def calc_mean_error_per_n_rotations(error, phase, n):
     """ 
-    Calculates for every time-step the mean error over the last 360 degrees.
-    The returned mean_error is a list of the same length as time.
+    Calculates for every time-step the mean error over the last n*360 degrees.
+    The returned mean_error is a list of the same length as error.
     """
-    # TODO Maybe it is better to average over time, not over degrees? Will give
-    # different result if subject stays at one positon (phase) with some error
-    # for longer period of time...
     # TODO Maybe there is a built-in hist() function?!?
 
     mean_error = []
     bins = []
-    last_phase = 0.0
     last_bins_index = 0
+    rotation_iterator = 1 # takes values from 1 to n and then wraps back to 1
 
-    # Get bins to be a list of length 360
-    for j in range(0,360):
+    # Get bins to be a list of length n*360
+    for j in range(0, n*360):
         bins.append(0.0)
 
-    # Iterate over all time steps
-    for i in range(0, len(time)):
-        bins_index = int(round(phase[i]) % 360) # convert from +-180 to [0,360]
+    # Save the first phase where trajectory starts. When we come back to this,
+    # rotation_iterator has to be increased by one.
+    first_bins_index = int(round(phase[0] % 360)) # convert phase from +-180 to [0,360]
+
+    # Iterate over all error samples
+    for i in range(0, len(error)):
+        bins_index = int(round(phase[i]) % 360) # convert phase from +-180 to [0,360]
         if (last_bins_index != bins_index):
-            bins[bins_index] = 0.0
+            bins[rotation_iterator * bins_index] = 0.0
+            # If one rotation is completed, update rotation_iterator
+            if (bins_index == first_bins_index):
+                rotation_iterator += 1
+                if rotation_iterator > n:
+                    rotation_iterator = 1
+
         # find max error in this bin and store it in bins[]
-        if (abs(error[i]) > bins[bins_index]):
-            bins[bins_index] = abs(error[i])
+        if (abs(error[i]) > bins[rotation_iterator * bins_index]):
+            bins[rotation_iterator * bins_index] = abs(error[i])
         last_bins_index = bins_index
 
         # sum over all bins and normalize by number of bins
-        sum = 0
-        for j in range(0,359):
-            sum += bins[j]
+        sum = 0.0
+        # for j in range(0, (n*360-1)):
+        #     sum += bins[j]
+        for item in bins:
+            sum += item
 
-        mean_error.append(sum / 360)
+        mean_error.append(sum / (n*360 - bins.count(0.0)))
 
     return mean_error
+
+
+def moving_average(values, window_length):
+    """
+    Calculates for every time-step the average value over the last
+    window_length samples. The returned smoothed_values is a list of
+    the same length as values.
+    Attention: This is very expensive for large number of values and large
+    window_length.
+    """
+    #TODO use convolution with mean filter instead of moving average to get rid
+    # of shift... peaks should stay at the point where they really happen. The
+    # simple moving average washes them to the right.
+    smoothed_values = []
+    bins = []
+
+    # get bins to be a list of length window_length, initialized with zeros
+    for j in range(0, window_length):
+        bins.append(0.0)
+
+    bins_index = 0
+    for sampleNo in range(0, len(values)):
+        bins_index = bins_index % window_length # reset index to 0 if too big
+        bins[bins_index] = abs(values[sampleNo])
+
+        # take sum over all items in bins
+        sum = 0.0
+        for item in bins:
+            sum += item
+
+        # Divide sum by number of non-zero items that contributed to the sum
+        smoothed_values.append(sum / (window_length - bins.count(0.0)))
+
+    return smoothed_values
+
+
+# def butterworth_filter(values, cutoff_freq = 20.0, dt = 0.002, order = 4):
+#     """
+#     Runs a digital butterworth lowpass filter over the values and returns the
+#     filtered values as a list of the same length as the input.
+# 
+#     cutoff_freq is the desired cutoff frequency in Hz
+#     dt is the sample time (time between two samples) in seconds
+#     order is the order of the filter transfer function
+#     """
+#     import scipy.signal
+#     # Get butterworth filter coefficients
+#     b,a=scipy.signal.butter(order,(cutoff_freq * dt), btype='low', analog=0)
+#     vals = np.array(values)
+#     filtered_values = scipy.signal.filtfilt(b,a,vals)
+#     return filtered_values
 
 
 def calc_mean_circle(x_vals, y_vals):
