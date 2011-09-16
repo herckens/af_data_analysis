@@ -19,7 +19,10 @@ def read_logfile(logfilename):
     Column 6 time_for_last_rotation
     Column 7 is_catch_trial
     # I am a comment and I could be anywhere in the file.
-    Type: baseline
+    Type: baseline (Deprecated! This is only here to keep compatibility with Hendrik's python analysis scripts. Use the flag
+    Flag: Baseline 1
+    Flag: NoiseFB 0
+    Flag: BackgroundMusic 0
     40935 0.655575 -157.484 0.0171131 -89.7615 0 0 0
     41012 0.655738 -157.48 0.01337 -89.7614 0 0 0
     41089 0.631434 -157.505 0.0386854 -89.7703 0 0 0
@@ -27,15 +30,19 @@ def read_logfile(logfilename):
 
     The return would be a dictionary of this form:
 
-    time: [40935, 41012, 41089]
+    time: [40935, 41012, 41089, ...]
     pos_x: [..., ..., ...]
     ...
 
-    type is either "baseline", "training_with_feedback" or "training without feedback"
+    type is either "baseline", "training_with_feedback" or "training_without_feedback"
     """
 
-    data = {}   # The return variable
-    type = ""   # The second return variable
+    data = {}       # The return variable
+    type = ""       # The second return variable (Deprecated! Use the 'Flag' lines to identify the type instead)
+    flags = {}      # The third return variable. A dictionary of the form:
+                    # 'Baseline': 1
+                    # 'NoiseFB': 0
+                    # 'BackgroundMusic': 0
     column_map = {} # Will contain information to match a column to the
                     # corresponding variable:
                     # 0: 'time'
@@ -60,6 +67,10 @@ def read_logfile(logfilename):
 
         if (words[0] == "Type:"):
             type = words[1]
+            continue # we're done with this line
+
+        if (words[0] == "Flag:"):
+            flags[words[1]] = int(words[2])
             continue # we're done with this line
 
         if (words[0] == "Column"):
@@ -95,4 +106,4 @@ def read_logfile(logfilename):
                 break
             data[column_map[i]].append(float(words[i]))
 
-    return data, type
+    return data, type, flags

@@ -48,7 +48,7 @@ for subjectNo in range(0, len(logFileDirs)):
 
     for i in range(0, len(fnames)):
         print('Log file number ' + str(i))
-        data, type = read_logfile(fnames[i])    # read the logfile
+        data, type, flags = read_logfile(fnames[i])    # read the logfile
 
         length = len(data['pos_x'])
 

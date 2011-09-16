@@ -33,7 +33,7 @@ for i in range(0, len(fnames)):
 
 for i in range(0, len(fnames)):
     print('Log file number ' + str(i))
-    data, type = read_logfile(fnames[i])    # read the logfile
+    data, type, flags = read_logfile(fnames[i])    # read the logfile
 
     ############################
     ### Data Preconditioning ###

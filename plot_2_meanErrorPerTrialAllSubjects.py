@@ -46,7 +46,7 @@ for subjectNo in range(0, len(logFileDirs)):
 
     for i in range(0, len(fnames)):
         print('Log file number ' + str(i))
-        data, type = read_logfile(fnames[i])    # read the logfile
+        data, type, flags = read_logfile(fnames[i])    # read the logfile
 
         # if no feedback, compute error from dynamically calculated center and
         # radius, because subject might have been drawing circles not around
