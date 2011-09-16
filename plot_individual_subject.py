@@ -1,3 +1,8 @@
+"""
+This script can be used to give subjects a quick glance at their data after
+they have completed the experiments.
+"""
+
 import pylab
 import os
 
@@ -88,28 +93,30 @@ for i in range(0, len(fnames)):
         ax.add_patch(circle)
 
         pylab.legend()
-        pylab.savefig('plotTraj' + realType + '_' + subjectName + '.svg')
+        pylab.savefig('plotTraj' + realType + '_' + subjectName + '.pdf')
 
 
     elif (type == 'training_with_feedback'):
         print('Type = ' + type)
 
-        ################################
-        ### Plot mean error vs. time ###
-        ################################
+        #########################################
+        ### Plot smoothed mean error vs. time ###
+        #########################################
 
-        # mean_error_per_rot = processing.calc_mean_error_per_n_rotations(data['error'], data['phase'], 5)
-        # # mean_error_per_rot = processing.butterworth_filter(data['error'], 0.9, 0.002, 4)
+        mean_error_per_rot = processing.calc_mean_error_per_n_rotations(data['error'], data['phase'], 5)
+        # mean_error_per_rot = processing.butterworth_filter(data['error'], 0.9, 0.002, 4)
 
-        # figureCounter += 1
-        # fig = pylab.figure(figureCounter)
-        # pylab.clf()
-        # pylab.plot(data['time'], mean_error_per_rot, label='mean error per rotation')
-        # pylab.plot(data['time'], data['time_for_last_rotation'], label='time for previous rotation')
-        # pylab.plot(data['time'], data['is_catch_trial'], label='is catch trial')
-        # pylab.xlabel('time [s]')
-        # pylab.ylabel('mean error [mm]')
-        # pylab.legend()
+        figureCounter += 1
+        fig = pylab.figure(figureCounter)
+        pylab.clf()
+        pylab.plot(data['time'], mean_error_per_rot, label='mean error per rotation')
+        pylab.plot(data['time'], data['time_for_last_rotation'], label='time for previous rotation')
+        pylab.plot(data['time'], data['is_catch_trial'], label='is catch trial')
+        pylab.xlabel('time [s]')
+        pylab.ylabel('mean error [mm]')
+        pylab.title('Mean Error per Rotation, Moving Average over 5 Rotations')
+        pylab.legend()
+        pylab.savefig('plotTrainingErrorSmoothed_' + subjectName + '.pdf')
 
         #############################################
         ### Plot moving average of error vs. time ###
@@ -157,7 +164,7 @@ for i in range(0, len(fnames)):
         circle = pylab.Circle((0, 0), radius = 230.0, fill = False, color = 'm', label = 'Saturation')
         ax.add_patch(circle)
         pylab.legend()
-        pylab.savefig('plotTraj' + 'TrainingWithFeedback_' + subjectName + '.svg')
+        pylab.savefig('plotTraj' + 'TrainingWithFeedback_' + subjectName + '.pdf')
 
     elif (type == 'training_without_feedback'):
         print('Type = ' + type)
@@ -197,7 +204,7 @@ for i in range(0, len(fnames)):
         ax.add_patch(circle)
 
         pylab.legend()
-        pylab.savefig('plotTraj' + 'TrainingWithoutFeedback_' + subjectName + '.svg')
+        pylab.savefig('plotTraj' + 'TrainingWithoutFeedback_' + subjectName + '.pdf')
 
     else :
         print('Unknown type of log file. Please check the following file')

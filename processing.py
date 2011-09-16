@@ -35,6 +35,12 @@ def calc_mean_error_per_n_rotations(error, phase, n):
     """ 
     Calculates for every time-step the mean error over the last n*360 degrees.
     The returned mean_error is a list of the same length as error.
+
+    ATTENTION: The returned error data for the first n rotations is
+    meaningless, or at least not comparable to the rest of the data! This is
+    because this computes a moving average over the last n rotations, but
+    during the first n rotations in the data, there are less than n previous
+    rotations.
     """
     # TODO Maybe there is a built-in hist() function?!?
 
@@ -74,7 +80,8 @@ def calc_mean_error_per_n_rotations(error, phase, n):
         for item in bins:
             sum += item
 
-        mean_error.append(sum / (n*360 - bins.count(0.0)))
+        # mean_error.append(sum / (n*360 - bins.count(0.0)))
+        mean_error.append(sum / (n*360))
 
     return mean_error
 

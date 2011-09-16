@@ -99,7 +99,7 @@ for i in range(0, len(fnames)):
                         circle = pylab.Circle((0, 0), radius = 230.0, fill = False, color = 'm', label = 'Saturation')
                         ax.add_patch(circle)
                         pylab.legend()
-                        pylab.savefig('plotCatchTrial_' + subjectName + '_No' + str(figureCounter-1) + '.svg')
+                        pylab.savefig('plotCatchTrial_' + subjectName + '_No' + str(figureCounter-1) + '.pdf')
 
                         fig = pylab.figure(1)
                         if (figureCounter < 9):
@@ -138,7 +138,7 @@ ax.add_patch(circle)
 circle = pylab.Circle((0, 0), radius = 230.0, fill = False, color = 'm')#, label = 'Saturation')
 ax.add_patch(circle)
 pylab.legend()
-pylab.savefig('plotCatchTrial_' + subjectName + '_allCatchTrials.svg')
+pylab.savefig('plotCatchTrial_' + subjectName + '_allCatchTrials.pdf')
 
 # pylab.show()    # actually show all the plots. This should be at the bottom.
 
